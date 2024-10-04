@@ -20,9 +20,13 @@ def check_venv():
         )
 
 
-def check_core_headers():
+def get_include_dir():
     config_paths = sysconfig.get_paths()
-    include_dir = config_paths['include']
+    return config_paths['include']
+
+
+def check_core_headers():
+    include_dir = get_include_dir()
     if include_dir is None:
         raise RuntimeError("Python source code headers are not available.")
 
@@ -129,7 +133,7 @@ def invoke_main():
 
     supporting_files = []
     extension_modules = []
-    include_dir = sysconfig.get_python_inc()
+    include_dir = get_include_dir()
 
     # Any file starting ft_ and ending .c will be compiled into all libraries as
     # support c file.
