@@ -41,23 +41,11 @@ jobs:
         run: |
           python setup.py bdist_wheel
 
-      - name: List
-        run: |
-          echo "Current Working Directory:"
-          pwd
-          echo "Contents of the Current Directory:"
-          ls -la
-          cd build
-          echo "Contents of the Build Directory:"
-          ls -la
-        working-directory: ${{github.workspace}}
-
       - name: Install wheel
-        shell: pwsh
         run: |
           pip install build/dist/*.whl
         working-directory: ${{github.workspace}}
 
       - name: Test
-        run: python -m ft_utils.test.test_run_all
+        run: python -m ft_utils.tests.test_run_all
         working-directory: ${{github.workspace}}
