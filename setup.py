@@ -13,7 +13,7 @@ from setuptools import Extension, find_packages, setup
 
 
 def check_venv():
-    if sys.prefix == sys.base_prefix:
+    if (not os.environ.get('GITHUB_ACTIONS')) and sys.prefix == sys.base_prefix:
         raise RuntimeError(
             "setpy.py must run in a virtualenv with the correct version "
             + "of python against which you will build the wheel."
