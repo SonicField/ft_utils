@@ -48,6 +48,10 @@ jobs:
           pip install build/dist/*.whl
         working-directory: ${{github.workspace}}
 
+      - name: Print sys.path
+        run: |
+          python -c "import sys; print(sys.path)"
+
       - name: Print ft_utils
         run: |
           python -c "import os; import ft_utils; print(ft_utils.__file__); print(os.listdir(os.path.dirname(ft_utils.__file__)))"

@@ -72,7 +72,7 @@ def copy_files(build_dir, script_dir, python_dir, tests_dir, native_dir):
         if filename.endswith(".py"):
             if filename.startswith("test_") or filename.endswith("_bench.py"):
                 shutil.copy(filepath, tests_dir)
-            else:
+            elif filename != "setup.py":
                 shutil.copy(filepath, python_dir)
         elif filename.endswith(".c") or filename.endswith(".h"):
             shutil.copy(filepath, native_dir)
