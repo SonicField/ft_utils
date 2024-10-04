@@ -48,4 +48,4 @@ jobs:
 
       - name: Test
         run: python -m ft_utils.tests.test_run_all
-        working-directory: ${{github.workspace}}
+        working-directory: ${{github.workspace}}/build
