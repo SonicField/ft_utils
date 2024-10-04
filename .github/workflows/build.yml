@@ -41,6 +41,8 @@ jobs:
         shell: pwsh
         run: |
           python setup.py bdist_wheel
+          pwd
+          ls
           pip install dist/*.whl
         working-directory: ${{github.workspace}}
 
