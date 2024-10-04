@@ -37,10 +37,24 @@ jobs:
         run: |
           pip install setuptools wheel
 
-      - name: Build and install wheel
-        shell: pwsh
+      - name: Build
         run: |
           python setup.py bdist_wheel
+
+      - name: List
+        run: |
+          echo "Current Working Directory:"
+          pwd
+          echo "Contents of the Current Directory:"
+          ls -la
+          cd ..
+          echo "Contents of the Parent Directory:"
+          ls -la
+        working-directory: ${{github.workspace}}
+
+      - name: Install wheel
+        shell: pwsh
+        run: |
           pwd
           ls ../*
           pip install dist/*.whl
