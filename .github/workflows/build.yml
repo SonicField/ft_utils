@@ -13,12 +13,16 @@ jobs:
         include:
           - os: ubuntu-latest
             python-version: '3.13.0-rc.3'
+            soabi: cp313-rc3-linux
           - os: windows-latest
             python-version: '3.13.0-rc.3'
+            soabi: cp313-rc3-win
           - os: macos-latest
             python-version: '3.13.0-rc.3'
+            soabi: cp313-rc3-macos
           - os: ubuntu-latest
             python-version: '3.14.0-alpha.0'
+            soabi: cp314-alpha0-linux
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -39,11 +43,11 @@ jobs:
 
       - name: Build
         run: |
-          python setup.py bdist_wheel
+          python setup.py bdist_wheel --soabi ${{ matrix.soabi }}
 
       - name: Install wheel
         run: |
-          pip install build/dist/*.whl -vv
+          pip install build/dist/*.whl
         working-directory: ${{github.workspace}}
 
       - name: Test
