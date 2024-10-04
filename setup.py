@@ -4,10 +4,10 @@
 
 import os
 import shutil
+import sysconfig
 import sys
 
 from contextlib import contextmanager
-from distutils import sysconfig
 
 from setuptools import Extension, find_packages, setup
 
