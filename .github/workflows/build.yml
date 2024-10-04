@@ -47,17 +47,15 @@ jobs:
           pwd
           echo "Contents of the Current Directory:"
           ls -la
-          cd ..
-          echo "Contents of the Parent Directory:"
+          cd build
+          echo "Contents of the Build Directory:"
           ls -la
         working-directory: ${{github.workspace}}
 
       - name: Install wheel
         shell: pwsh
         run: |
-          pwd
-          ls ../*
-          pip install dist/*.whl
+          pip install build/dist/*.whl
         working-directory: ${{github.workspace}}
 
       - name: Test
