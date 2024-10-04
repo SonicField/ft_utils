@@ -43,7 +43,7 @@ jobs:
 
       - name: Install wheel
         run: |
-          pip install build/dist/*.whl
+          pip install build/dist/*.whl -vv
         working-directory: ${{github.workspace}}
 
       - name: Test
