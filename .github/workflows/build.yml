@@ -42,7 +42,7 @@ jobs:
         run: |
           python setup.py bdist_wheel
           pwd
-          ls
+          ls ../*
           pip install dist/*.whl
         working-directory: ${{github.workspace}}
 
