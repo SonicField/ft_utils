@@ -21,7 +21,8 @@ def check_venv():
 
 
 def check_core_headers():
-    include_dir = sysconfig.get_python_inc()
+    config_paths = sysconfig.get_paths()
+    include_dir = config_paths['include']
     if include_dir is None:
         raise RuntimeError("Python source code headers are not available.")
 
