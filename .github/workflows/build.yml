@@ -48,6 +48,10 @@ jobs:
           pip install build/dist/*.whl
         working-directory: ${{github.workspace}}
 
+      - name: Print importlib.util.find_spec('ft_utils.local')
+        run: |
+          python -c "import importlib.util; print(importlib.util.find_spec('ft_utils.local'))"
+
       - name: Print sys.path
         run: |
           python -c "import sys; print(sys.path)"
