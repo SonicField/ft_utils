@@ -37,9 +37,12 @@ jobs:
         run: |
           pip install setuptools wheel
 
-      - name: Build
+      - name: Build and install wheel
+        shell: pwsh
         run: |
           python setup.py bdist_wheel
+          $WHEEL_FILE = Get-ChildItem dist/*.whl
+          pip install $WHEEL_FILE.FullName
 
       - name: Test
         run: python -m ft_utils.test.test_run_all
