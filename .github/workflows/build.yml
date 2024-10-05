@@ -38,8 +38,6 @@ jobs:
       - name: Setup MSVC
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
-        with:
-          vsversion: '2019'
 
       - name: Install dependencies
         run: |

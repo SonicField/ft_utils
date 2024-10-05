@@ -20,6 +20,19 @@ def check_venv():
         )
 
 
+def check_compiler():
+    import distutils.ccompiler as cc
+    plat = os.name
+    compiler = cc.get_default_compiler(plat)
+    (module_name, class_name, long_description) = cc.compiler_class[compiler]
+
+    module_name = "distutils." + module_name
+    __import__ (module_name)
+    module = sys.modules[module_name]
+    klass = vars(module)[class_name]
+    print(f"Found compiler {module} -> {klass}")
+
+
 def get_include_dir():
     config_paths = sysconfig.get_paths()
     return config_paths['include']
@@ -37,6 +50,7 @@ def check_core_headers():
 def check_setup():
     check_venv()
     check_core_headers()
+    check_compiler()
 
 
 def create_directory(path):
@@ -114,19 +128,6 @@ def setup_args(*args):
     finally:
         sys.argv = original_argv
 
-def new_compiler():
-    import distutils.ccompiler as cc
-    plat = os.name
-    compiler = cc.get_default_compiler(plat)
-    (module_name, class_name, long_description) = cc.compiler_class[compiler]
-
-    module_name = "distutils." + module_name
-    __import__ (module_name)
-    module = sys.modules[module_name]
-    klass = vars(module)[class_name]
-    print(f"Found compiler {module} -> {klass}")
-
-new_compiler()
 
 def invoke_main():
     check_setup()
