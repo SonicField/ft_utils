@@ -37,7 +37,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install setuptools wheel
+          pip install --upgrade setuptools wheel
+
+      - name: Install MSVC
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --quiet --norestart"
 
       - name: Build
         run: |
