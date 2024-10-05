@@ -114,6 +114,19 @@ def setup_args(*args):
     finally:
         sys.argv = original_argv
 
+def new_compiler():
+    import distutils.ccompiler as cc
+    plat = os.name
+    compiler = cc.get_default_compiler(plat)
+    (module_name, class_name, long_description) = cc.compiler_class[compiler]
+
+    module_name = "distutils." + module_name
+    __import__ (module_name)
+    module = sys.modules[module_name]
+    klass = vars(module)[class_name]
+    print(f"Found compiler {module} -> {klass}")
+
+new_compiler()
 
 def invoke_main():
     check_setup()
@@ -164,7 +177,7 @@ def invoke_main():
         long_descr = readme_file.read()
 
     os.chdir("build")
-    with setup_args("bdist_wheel", "--verbose"):
+    with setup_args("bdist_wheel"):
         setup(
             name="ft_utils",
             version="0.1.0",
