@@ -20,16 +20,16 @@ def check_venv():
         )
 
 
-def patch_out_asycio():
+def patch_out():
     # On windows mock gets imported from _msvccompiler which then tries to import asyncio
     # which causes a name conflict on concurrent. This prevents that.
-    if sys.platform.startswith('win'):
-        asyncio_stub = type(sys)('asyncio')
-        sys.modules['asyncio'] = asyncio_stub
+    if sys.platform.startswith("win"):
+        sys.modules["unittest"] = type(sys)("unittest")
+        sys.modules["unittest.mock"] = type(sys)("mock")
 
 
 def check_compiler():
-    patch_out_asycio()
+    patch_out()
     import distutils.ccompiler as cc
     plat = os.name
     compiler = cc.get_default_compiler(plat)
