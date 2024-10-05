@@ -6,11 +6,6 @@ import os
 import subprocess
 import sys
 
-try:
-    from ft_utils import local
-except ImportError as e:
-    print(f"Error importing local: {e}")
-
 
 def run_test(filename):
     print(f"Running {filename}...")

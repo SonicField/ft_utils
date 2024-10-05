@@ -48,18 +48,9 @@ jobs:
           pip install build/dist/*.whl
         working-directory: ${{github.workspace}}
 
-      - name: Print importlib.util.find_spec('ft_utils.local')
-        run: |
-          python -c "import importlib.util; print(importlib.util.find_spec('ft_utils.local'))"
-
-      - name: Print sys.path
-        run: |
-          python -c "import sys; print(sys.path)"
-
-      - name: Print ft_utils
-        run: |
-          python -c "import os; import ft_utils; print(ft_utils.__file__); print(os.listdir(os.path.dirname(ft_utils.__file__)))"
-
       - name: Test
-        run: python -m ft_utils.tests.test_run_all
-        working-directory: ${{github.workspace}}/build
+        run: |
+          mkdir test_dir
+          cd test_dir
+          python -m ft_utils.tests.test_run_all
+        working-directory: ${{github.workspace}}
