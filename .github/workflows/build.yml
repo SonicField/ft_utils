@@ -35,22 +35,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
 
-      - name: Install MSVC
+      - name: Setup MSBuild (Windows only)
         if: runner.os == 'Windows'
-        run: |
-          choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --quiet --norestart"
-
-      - name: Install vswhere (Windows only)
-        if: runner.os == 'Windows'
-        run: |
-          choco install vswhere
-
-      - name: Set up MSVC environment (Windows only)
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find "**\vcvarsall.bat" | set /p VC_VARS=
-          call "%VC_VARS%" x64
+        uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Install dependencies
         run: |
