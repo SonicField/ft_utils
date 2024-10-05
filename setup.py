@@ -29,7 +29,7 @@ def patch_out_asycio():
 
 
 def check_compiler():
-    patch_out_asycio():
+    patch_out_asycio()
     import distutils.ccompiler as cc
     plat = os.name
     compiler = cc.get_default_compiler(plat)
