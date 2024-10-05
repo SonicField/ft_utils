@@ -164,7 +164,7 @@ def invoke_main():
         long_descr = readme_file.read()
 
     os.chdir("build")
-    with setup_args("bdist_wheel", "--debug"):
+    with setup_args("bdist_wheel", "--verbose"):
         setup(
             name="ft_utils",
             version="0.1.0",
