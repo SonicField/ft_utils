@@ -1,26 +1,35 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
-# pyre-unsafe
+# pyre-strict
 
 import os
 import shutil
-import sysconfig
 import sys
+import sysconfig
 
 from contextlib import contextmanager
 
 from setuptools import Extension, find_packages, setup
 
 
-def check_venv():
-    if (not os.environ.get('GITHUB_ACTIONS')) and sys.prefix == sys.base_prefix:
+def check_venv() -> None:
+    """
+    Check if the script is running in a virtual environment.
+
+    Raises:
+        RuntimeError: If not running in a virtual environment and not on github.
+    """
+    if (not os.environ.get("GITHUB_ACTIONS")) and sys.prefix == sys.base_prefix:
         raise RuntimeError(
             "setpy.py must run in a virtualenv with the correct version "
             + "of python against which you will build the wheel."
         )
 
 
-def patch_out():
+def patch_out() -> None:
+    """
+    Patch out certain modules to prevent import conflicts on Windows.
+    """
     # On windows mock gets imported from _msvccompiler which then tries to import asyncio
     # which causes a name conflict on concurrent. This prevents that.
     if sys.platform.startswith("win"):
@@ -28,26 +37,44 @@ def patch_out():
         sys.modules["unittest.mock"] = type(sys)("mock")
 
 
-def check_compiler():
+def check_compiler() -> None:
+    """
+    Check the default compiler for the current platform and fix up name clashed on windows.
+
+    Prints the found compiler class.
+    """
     patch_out()
     import distutils.ccompiler as cc
+
     plat = os.name
     compiler = cc.get_default_compiler(plat)
     (module_name, class_name, long_description) = cc.compiler_class[compiler]
 
     module_name = "distutils." + module_name
-    __import__ (module_name)
+    __import__(module_name)
     module = sys.modules[module_name]
     klass = vars(module)[class_name]
     print(f"Found compiler {module} -> {klass}")
 
 
-def get_include_dir():
+def get_include_dir() -> str | None:
+    """
+    Get the include directory from sysconfig.
+
+    Returns:
+        The include directory path, or None if not available.
+    """
     config_paths = sysconfig.get_paths()
-    return config_paths['include']
+    return config_paths["include"]
 
 
-def check_core_headers():
+def check_core_headers() -> None:
+    """
+    Check if Python source code headers are available.
+
+    Raises:
+        RuntimeError: If headers are not available.
+    """
     include_dir = get_include_dir()
     if include_dir is None:
         raise RuntimeError("Python source code headers are not available.")
@@ -56,18 +83,33 @@ def check_core_headers():
         raise RuntimeError("Python source code core headers are not available.")
 
 
-def check_setup():
+def check_setup() -> None:
+    """
+    Run setup checks (virtual environment, core headers, compiler).
+    """
     check_venv()
     check_core_headers()
     check_compiler()
 
 
-def create_directory(path):
+def create_directory(path: str) -> None:
+    """
+    Create a directory at the given path if it does not exist.
+
+    Args:
+        path: The directory path to create.
+    """
     if not os.path.exists(path):
         os.makedirs(path)
 
 
-def remove_directory_contents(path):
+def remove_directory_contents(path: str) -> None:
+    """
+    Remove all contents of the given directory.
+
+    Args:
+        path: The directory path to clear.
+    """
     for filename in os.listdir(path):
         filepath = os.path.join(path, filename)
         try:
@@ -76,7 +118,16 @@ def remove_directory_contents(path):
             os.remove(filepath)
 
 
-def create_package_structure(build_dir):
+def create_package_structure(build_dir: str) -> tuple[str, str, str]:
+    """
+    Create the package structure within the build directory.
+
+    Args:
+        build_dir: The build directory path.
+
+    Returns:
+        A tuple containing the python, tests, and native directory paths.
+    """
     python_dir = os.path.join(build_dir, "ft_utils")
     tests_dir = os.path.join(python_dir, "tests")
     native_dir = os.path.join(python_dir, "native")
@@ -88,13 +139,27 @@ def create_package_structure(build_dir):
     return python_dir, tests_dir, native_dir
 
 
-def copy_files(build_dir, script_dir, python_dir, tests_dir, native_dir):
+def copy_files(
+    build_dir: str, script_dir: str, python_dir: str, tests_dir: str, native_dir: str
+) -> None:
+    """
+    Copy files from the script directory to their respective destinations.
+
+    Args:
+        build_dir: The build directory path.
+        script_dir: The script directory path.
+        python_dir: The python directory path.
+        tests_dir: The tests directory path.
+        native_dir: The native directory path.
+    """
     for filename in os.listdir(script_dir):
         filepath = os.path.join(script_dir, filename)
 
         if filename.endswith(".py"):
+            # Both benchmarks and test_ files are run as tests in CI.
             if filename.startswith("test_") or filename.endswith("_bench.py"):
                 shutil.copy(filepath, tests_dir)
+            # Do not copy yourself into the wheel.
             elif filename != "setup.py":
                 shutil.copy(filepath, python_dir)
         elif filename.endswith(".c") or filename.endswith(".h"):
@@ -103,13 +168,26 @@ def copy_files(build_dir, script_dir, python_dir, tests_dir, native_dir):
             shutil.copy(filepath, build_dir)
 
 
-def create_init_py(module_dir):
+def create_init_py(module_dir: str) -> None:
+    """
+    Create an empty __init__.py file in the given module directory.
+
+    Args:
+        module_dir: The module directory path.
+    """
     init_py_path = os.path.join(module_dir, "__init__.py")
     with open(init_py_path, "w"):
         pass
 
 
-def create_license(script_dir, build_dir):
+def create_license(script_dir: str, build_dir: str) -> None:
+    """
+    Create a license file in the build directory.
+
+    Args:
+        script_dir: The script directory path.
+        build_dir: The build directory path.
+    """
     license_from = os.path.join(script_dir, "LICENSE")
     license_to = os.path.join(build_dir, "LICENSE")
     if os.path.exists(license_from):
@@ -121,7 +199,13 @@ def create_license(script_dir, build_dir):
             )
 
 
-def create_setup_cfg(build_dir):
+def create_setup_cfg(build_dir: str) -> None:
+    """
+    Create a setup.cfg file in the build directory.
+
+    Args:
+        build_dir: The build directory path.
+    """
     setup_cfg_path = os.path.join(build_dir, "setup.cfg")
     with open(setup_cfg_path, "w") as f:
         f.write("[options]\n")
@@ -129,7 +213,17 @@ def create_setup_cfg(build_dir):
 
 
 @contextmanager
-def setup_args(*args):
+def setup_args(*args: str) -> None:
+    """
+    Temporarily set sys.argv to the given arguments.
+
+    Args:
+        *args: Variable number of string arguments.
+
+    Yields:
+        None
+    """
+
     original_argv = sys.argv[:]
     sys.argv = ["setup.py"] + list(args)
     try:
@@ -138,7 +232,10 @@ def setup_args(*args):
         sys.argv = original_argv
 
 
-def invoke_main():
+def invoke_main() -> None:
+    """
+    Run the main setup process.
+    """
     check_setup()
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
