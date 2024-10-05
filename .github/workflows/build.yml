@@ -30,7 +30,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: ${{ runner.os == 'Windows' && 'x86' || '' }}
 
       - name: Upgrade pip
         run: |
@@ -39,6 +38,8 @@ jobs:
       - name: Setup MSVC
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
+        with:
+          vs-version: '2019'
 
       - name: Install dependencies
         run: |
