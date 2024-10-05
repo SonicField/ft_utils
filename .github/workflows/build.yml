@@ -39,21 +39,13 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Check environment variables
-        run: |
-          echo "Path: $PATH"
-          echo "Include: $INCLUDE"
-          echo "Lib: $LIB"
-          cl.exe
-          where cl.exe
-
       - name: Install dependencies
         run: |
           pip install --upgrade setuptools wheel
 
       - name: Build
         run: |
-          python setup.py bdist_wheel
+          python setup.py bdist_wheel --verbose
 
       - name: Install wheel
         run: |
