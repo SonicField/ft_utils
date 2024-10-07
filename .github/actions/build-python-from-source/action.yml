@@ -96,6 +96,7 @@ runs:
     # Make sure we use our version of python.
     - name: Set LOCAL_PYTHON envvar
       run: echo "LOCAL_PYTHON=$prefix/bin/python3" >> $GITHUB_ENV
+      shell: bash
 
     # Ensure python is in the path and log out the version to help with debug.
     - name: Verify Python Installation

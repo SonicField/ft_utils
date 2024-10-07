@@ -84,6 +84,7 @@ jobs:
       - name: Set LOCAL_PYTHON envvar
         if: matrix.build-from-source == false
         run: echo "LOCAL_PYTHON=python" >> $GITHUB_ENV
+        shell: bash
 
       # Upgrade pip to the latest version.
       - name: Upgrade pip
