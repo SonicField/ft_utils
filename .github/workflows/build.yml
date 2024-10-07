@@ -24,9 +24,9 @@ jobs:
         include:
           # Add below those versions we want as Gil Based releases.
           # Note that 3.12.7 is only availible with the Gil enabled.
-          - os: ubuntu-latest
-            python-version: '3.12.7'
-            build-from-source: false
+          #- os: ubuntu-latest
+          #  python-version: '3.12.7'
+          #  build-from-source: false
           #- os: ubuntu-latest
           #  python-version: '3.13.0-rc.3'
           #  build-from-source: false

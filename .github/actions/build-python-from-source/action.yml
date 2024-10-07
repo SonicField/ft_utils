@@ -94,6 +94,7 @@ runs:
     - name: Verify Python Installation
       run: |
         python --version
+      shell: bash
 
     # Set the output variable 'python-path' to the path of the installed Python executable.
     - name: Set output path
