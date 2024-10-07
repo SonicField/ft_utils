@@ -73,6 +73,8 @@ runs:
           set CXXFLAGS=/Ox
           ./PCbuild/build.bat -e -d $configure_options
         fi
+        # Make sure we use our version of python.
+        echo "LOCAL_PYTHON=$prefix/bin/python3" >> $GITHUB_ENV
 
     # Install the built Python version.
     - name: Install Python
@@ -88,15 +90,8 @@ runs:
           # Copy the Python executable and necessary DLLs to the installation directory
           cp PCbuild/amd64/python.exe "C:/Python/${{ inputs.python-version }}"
           cp PCbuild/amd64/*.dll "C:/Python/${{ inputs.python-version }}"
-
-          # Add the installation directory to the system PATH
-          echo "C:/Python/${{ inputs.python-version }}" >> $GITHUB_PATH
         fi
 
-    # Make sure we use our version of python.
-    - name: Set LOCAL_PYTHON envvar
-      run: echo "LOCAL_PYTHON=$prefix/bin/python3" >> $GITHUB_ENV
-      shell: bash
 
     # Ensure python is in the path and log out the version to help with debug.
     - name: Verify Python Installation
