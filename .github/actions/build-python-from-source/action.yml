@@ -4,10 +4,10 @@ description: Builds Python from source code with configurable options
 
 inputs:
   python-version:
-    description: The version of Python to build: e.g. 3.13.0-rc3
+    description: "The version of Python to build: e.g. 3.13.0-rc3"
     required: true
   nogil:
-    description: Build Python without the GIL: true || false
+    description: "Build Python without the GIL: true || false"
     required: true
 
 outputs:
