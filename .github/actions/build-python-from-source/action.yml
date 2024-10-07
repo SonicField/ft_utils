@@ -93,17 +93,15 @@ runs:
           echo "C:/Python/${{ inputs.python-version }}" >> $GITHUB_PATH
         fi
 
+    # Make sure we use our version of python.
+    - name: Set LOCAL_PYTHON envvar
+      run: echo "LOCAL_PYTHON=$prefix/bin/python3" >> $GITHUB_ENV
+
     # Ensure python is in the path and log out the version to help with debug.
     - name: Verify Python Installation
       run: |
-        python --version
+        $LOCAL_PYTHON --version
       shell: bash
-
-    # Set the output variable 'python-path' to the path of the installed Python executable.
-    - name: Set output path
-      id: set-path
-      shell: bash
-      run: echo "::set-output name=python-path::$prefix/bin/python3"
 
 # Example of how to use this action in a workflow:
 #

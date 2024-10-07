@@ -79,6 +79,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           nogil: ${{ matrix.nogil }}
 
+      # Make sure we use our version of python, this is set in the build-from-source
+      # action os set it here for consistency if not building from source.
+      - name: Set LOCAL_PYTHON envvar
+        if: matrix.build-from-source == false
+        run: echo "LOCAL_PYTHON=python" >> $GITHUB_ENV
+
       # Upgrade pip to the latest version.
       - name: Upgrade pip
         run: |
@@ -98,9 +104,9 @@ jobs:
       - name: Build
         run: |
           if [ "${{ matrix.build-from-source }}" = "true" ]; then
-            python -P setup.py bdist_wheel --wheel-suffix=_nogil
+            $LOCAL_PYTHON -P setup.py bdist_wheel --wheel-suffix=_nogil
           else
-            python -P setup.py bdist_wheel
+            $LOCAL_PYTHON -P setup.py bdist_wheel
           fi
         shell: bash
 
@@ -116,5 +122,5 @@ jobs:
         run: |
           mkdir test_dir
           cd test_dir
-          python -m ft_utils.tests.test_run_all
+          $LOCAL_PYTHON -m ft_utils.tests.test_run_all
         working-directory: ${{github.workspace}}
