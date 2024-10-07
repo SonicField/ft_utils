@@ -65,7 +65,7 @@ runs:
         fi
         # Build it!
         if [ "${{ runner.os }}" != "Windows" ]; then
-          ./configure --prefix=$prefix $configure_options
+          ./configure --prefix=$prefix $configure_options --enable-optimizations
           make -j $(nproc)  # Use all available processors to speed up the build.
         else
           # Use the build script provided for Windows in the Python source.
@@ -76,6 +76,7 @@ runs:
     - name: Install Python
       shell: bash
       run: |
+        cd cpython
         if [ "${{ runner.os }}" != "Windows" ]; then
           sudo make install
         else
