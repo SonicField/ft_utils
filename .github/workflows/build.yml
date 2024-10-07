@@ -27,9 +27,9 @@ jobs:
           #- os: ubuntu-latest
           #  python-version: '3.12.7'
           #  build-from-source: false
-          #- os: ubuntu-latest
-          #  python-version: '3.13.0-rc.3'
-          #  build-from-source: false
+          - os: ubuntu-latest
+            python-version: '3.13.0-rc.3'
+            build-from-source: false
           #- os: windows-latest
           #  python-version: '3.13.0-rc.3'
           #  build-from-source: false

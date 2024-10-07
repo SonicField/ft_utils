@@ -65,11 +65,13 @@ runs:
         fi
         # Build it!
         if [ "${{ runner.os }}" != "Windows" ]; then
-          ./configure --prefix=$prefix $configure_options --enable-optimizations
+          ./configure --prefix=$prefix CFLAGS="-O3" CXXFLAGS="-O3" $configure_options
           make -j $(nproc)  # Use all available processors to speed up the build.
         else
           # Use the build script provided for Windows in the Python source.
-          ./PCbuild/build.bat -e -d
+          set CFLAGS=/Ox
+          set CXXFLAGS=/Ox
+          ./PCbuild/build.bat -e -d $configure_options
         fi
 
     # Install the built Python version.
