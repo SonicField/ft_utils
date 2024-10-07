@@ -42,8 +42,7 @@ runs:
       run: |
         git clone https://github.com/python/cpython.git
         cd cpython
-        # Prepend 'v' to the version number to match the tag format.
-        git checkout v${{ inputs.python-version }}
+        git checkout {{ inputs.python-version }}
 
     # Configure and build Python based on the OS and the 'nogil' input.
     - name: Configure and build Python
