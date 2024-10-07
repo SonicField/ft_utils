@@ -1,0 +1,107 @@
+name: Build Python from Source
+
+description: Builds Python from source code with configurable options
+
+inputs:
+  python-version:
+    description: The version of Python to build: e.g. 3.13.0-rc3
+    required: true
+  nogil:
+    description: Build Python without the GIL: true || false
+    required: true
+
+outputs:
+  python-path:
+    description: The path to the built Python executable
+    value: ${{ steps.set-path.outputs.python-path }}
+
+runs:
+  using: composite
+  steps:
+    # Ensure we have MSVC for Windows to build with.
+    - name: Setup MSVC on Windows
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    # Install necessary dependencies based on the operating system.
+    - name: Install dependencies
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" = "Linux" ]; then
+          sudo apt-get update
+          sudo apt-get install -y gcc make libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libffi-dev
+        elif [ "${{ runner.os }}" = "macOS" ]; then
+          brew install openssl readline sqlite3 xz
+        elif [ "${{ runner.os }}" = "Windows" ]; then
+          choco install openssl
+        fi
+
+    # Clone the Python source code from the official repository and checkout the specified version.
+    - name: Checkout Python source code
+      shell: bash
+      run: |
+        git clone https://github.com/python/cpython.git
+        cd cpython
+        # Prepend 'v' to the version number to match the tag format.
+        git checkout v${{ inputs.python-version }}
+
+    # Configure and build Python based on the OS and the 'nogil' input.
+    - name: Configure and build Python
+      shell: bash
+      run: |
+        # Do some output to help debugging if things go wrong/
+        pwd
+        cd cpython
+        pwd 
+        ls
+        # Set up the desired configuration.
+        configure_options=""
+        if [ "${{ inputs.nogil }}" = "true" ]; then
+          configure_options="--disable-gil"  # Add the --disable-gil option if nogil is true.
+        fi
+        if [ "${{ runner.os }}" = "Linux" ] || [ "${{ inputs.os }}" = "macOS" ]; then
+          prefix="/usr/local/python-${{ inputs.python-version }}"
+        elif [ "${{ runner.os }}" = "Windows" ]; then
+          prefix="C:/Python/${{ inputs.python-version }}"
+        fi
+        # Build it!
+        if [ "${{ runner.os }}" != "Windows" ]; then
+          ./configure --prefix=$prefix $configure_options
+          make -j $(nproc)  # Use all available processors to speed up the build.
+        else
+          # Use the build script provided for Windows in the Python source.
+          ./PCbuild/build.bat -e -d
+        fi
+
+    # Install the built Python version.
+    - name: Install Python
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" != "Windows" ]; then
+          sudo make install
+        else
+          # Installation steps for Windows should be defined if necessary.
+          echo "Install steps for Windows need to be defined"
+
+    # Set the output variable 'python-path' to the path of the installed Python executable.
+    - name: Set output path
+      id: set-path
+      shell: bash
+      run: echo "::set-output name=python-path::$prefix/bin/python3"
+
+# Example of how to use this action in a workflow:
+#
+# This example shows how to use the Build Python from Source action in a GitHub workflow.
+# Replace 'your-workflow.yml' with the name of your actual workflow file.
+#
+# .github/workflows/your-workflow.yml
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Build Python
+#       uses: ./.github/actions/build-python-from-source
+#       with:
+#         python-version: '3.9.1'
+#         nogil: true
