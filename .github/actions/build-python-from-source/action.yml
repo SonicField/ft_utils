@@ -51,7 +51,7 @@ runs:
         # Do some output to help debugging if things go wrong/
         pwd
         cd cpython
-        pwd 
+        pwd
         ls
         # Set up the desired configuration.
         configure_options=""
@@ -79,8 +79,21 @@ runs:
         if [ "${{ runner.os }}" != "Windows" ]; then
           sudo make install
         else
-          # Installation steps for Windows should be defined if necessary.
-          echo "Install steps for Windows need to be defined"
+          # Create the installation directory
+          mkdir "C:/Python/${{ inputs.python-version }}"
+
+          # Copy the Python executable and necessary DLLs to the installation directory
+          cp PCbuild/amd64/python.exe "C:/Python/${{ inputs.python-version }}"
+          cp PCbuild/amd64/*.dll "C:/Python/${{ inputs.python-version }}"
+
+          # Add the installation directory to the system PATH
+          echo "C:/Python/${{ inputs.python-version }}" >> $GITHUB_PATH
+        fi
+
+    # Ensure python is in the path and log out the version to help with debug.
+    - name: Verify Python Installation
+      run: |
+        python --version
 
     # Set the output variable 'python-path' to the path of the installed Python executable.
     - name: Set output path
