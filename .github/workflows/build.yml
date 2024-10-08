@@ -105,13 +105,13 @@ jobs:
       - name: Build
         run: |
           $LOCAL_PYTHON -P setup.py bdist_wheel
-          if [ "${{ matrix.build-from-source }}" = "true" ]; then
-            cd ${{github.workspace}}
-            # There is only one so we don't need a loop but - meh.
-            for file in build/dist/*.whl; do
-              mv "$file" "${file%.whl}_nogil.whl"
-            done
-          fi
+          #if [ "${{ matrix.build-from-source }}" = "true" ]; then
+            #cd ${{github.workspace}}
+            ## There is only one so we don't need a loop but - meh.
+            #for file in build/dist/*.whl; do
+            #  mv "$file" "${file%.whl}_nogil.whl"
+            #done
+          #fi
         shell: bash
 
       # Install the built wheel package so we can test it.
