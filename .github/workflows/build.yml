@@ -104,10 +104,9 @@ jobs:
       # Build the wheel package with or without nogil suffix.
       - name: Build
         run: |
+          $LOCAL_PYTHON -P setup.py bdist_wheel
           if [ "${{ matrix.build-from-source }}" = "true" ]; then
-            $LOCAL_PYTHON -P setup.py bdist_wheel --wheel-suffix=_nogil
-          else
-            $LOCAL_PYTHON -P setup.py bdist_wheel
+            mv dist/*.whl dist/*_nogil.whl
           fi
         shell: bash
 
