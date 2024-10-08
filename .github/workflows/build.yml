@@ -106,7 +106,10 @@ jobs:
         run: |
           $LOCAL_PYTHON -P setup.py bdist_wheel
           if [ "${{ matrix.build-from-source }}" = "true" ]; then
-            mv dist/*.whl dist/*_nogil.whl
+            cd ${{github.workspace}}
+            for file in dist/*.whl; do
+              mv "$file" "${file%.whl}_nogil.whl"
+            done
           fi
         shell: bash
 
