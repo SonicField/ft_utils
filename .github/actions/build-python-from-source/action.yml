@@ -33,10 +33,9 @@ runs:
         elif [ "${{ runner.os }}" = "macOS" ]; then
           brew install openssl readline sqlite3 xz
         elif [ "${{ runner.os }}" = "Windows" ]; then
-          choco install --quiet openssl
+          choco install --quiet  --no-progress openssl
         fi
 
-    # Do not rebuild python if we do not need to.
     - name: Cache the entire checkout and build.
       if: "!contains(inputs.python-version, 'alpha')"
       uses: actions/cache@v3
@@ -44,6 +43,7 @@ runs:
       with:
         path: ${github.workspace}/cpython
         key: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
+        restore-keys: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
 
     # Clone the Python source code from the official repository and checkout the specified version.
     - name: Checkout Python source code
@@ -90,6 +90,15 @@ runs:
           ./PCbuild/build.bat -e $configure_options
         fi
 
+    # Update/create the cache.
+    - name: Cache Python build
+      if: "!contains(inputs.python-version, 'alpha')"
+      uses: actions/cache@v3
+      with:
+        path: ${github.workspace}/cpython
+        key: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
+        restore-keys: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
+
     # Install the built Python version.
     - name: Install Python
       if: steps.cpython-cache.outputs.cache-hit != 'true'
@@ -98,14 +107,6 @@ runs:
         cd cpython
         if [ "${{ runner.os }}" != "Windows" ]; then
           sudo make install
-        #else
-        #  # Get the current working directory
-        #  cwd=$(pwd)
-        #  # Create the installation directory
-        #  mkdir -p "${cwd}/Python/${{ inputs.python-version }}"
-        #  # Copy the Python executable and necessary DLLs to the installation directory
-        #  cp PCbuild/amd64/*.exe "${cwd}/Python/${{ inputs.python-version }}"
-        #  cp PCbuild/amd64/*.dll "${cwd}/Python/${{ inputs.python-version }}"
         fi
 
     # Make sure we use our version of python.
@@ -118,8 +119,7 @@ runs:
           # Find the Python executable and set LOCAL_PYTHON
           cd cpython
           cwd=$(pwd)
-          # LOCAL_PYTHON=$(find "${cwd}/Python/${{ inputs.python-version }}" -name "python3*_d.exe")
-          LOCAL_PYTHON=$(find "${cwd}/PCbuild/amd64/${{ inputs.python-version }}" -name "python3*.exe")
+          LOCAL_PYTHON=$(find "${cwd}/PCbuild/amd64/" -name "python3*.exe")
           echo "LOCAL_PYTHON=${LOCAL_PYTHON}" >> $GITHUB_ENV
         fi
 
