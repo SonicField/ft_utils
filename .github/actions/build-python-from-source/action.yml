@@ -48,7 +48,9 @@ runs:
           git checkout ${{ inputs.python-version }}
         fi
 
+    # Do not rebuild python is we do not need to.
     - name: Cache Python built artifacts
+      if: "!contains(inputs.python-version, 'alpha')"
       uses: actions/cache@v3
       id: python-cache
       with:
@@ -132,6 +134,8 @@ runs:
 #
 # This example shows how to use the Build Python from Source action in a GitHub workflow.
 # Replace 'your-workflow.yml' with the name of your actual workflow file.
+#
+# Note: if the python version has alpha in it then we clone the tip of main and do not cache.
 #
 # .github/workflows/your-workflow.yml
 # jobs:

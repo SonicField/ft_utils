@@ -83,11 +83,12 @@ jobs:
       # action os set it here for consistency if not building from source.
       - name: Set LOCAL_PYTHON envvar
         if: matrix.build-from-source == false
-        run: echo "LOCAL_PYTHON=python" >> $GITHUB_ENV
         shell: bash
+        run: echo "LOCAL_PYTHON=python" >> $GITHUB_ENV
 
       # Upgrade pip to the latest version.
       - name: Upgrade pip
+        shell: bash
         run: |
           $LOCAL_PYTHON -m pip install --upgrade pip
 
@@ -98,11 +99,13 @@ jobs:
 
       # Install dependencies required for building and testing.
       - name: Install dependencies
+        shell: bash
         run: |
           $LOCAL_PYTHON -m pip install --upgrade setuptools wheel
 
       # Build the wheel package with or without nogil suffix.
       - name: Build
+        shell: bash
         run: |
           $LOCAL_PYTHON -P setup.py bdist_wheel
           #if [ "${{ matrix.build-from-source }}" = "true" ]; then
@@ -112,17 +115,17 @@ jobs:
             #  mv "$file" "${file%.whl}_nogil.whl"
             #done
           #fi
-        shell: bash
 
       # Install the built wheel package so we can test it.
       - name: Install wheel
+        shell: bash
         run: |
           $LOCAL_PYTHON -m pip install build/dist/*.whl
-        shell: bash
         working-directory: ${{github.workspace}}
 
       # Run all the tests and benchmarks.
       - name: Test
+        shell: bash
         run: |
           mkdir test_dir
           cd test_dir
