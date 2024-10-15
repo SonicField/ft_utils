@@ -80,6 +80,7 @@ runs:
 
       # Make sure we use our version of python.
     - name: Set LOCAL_PYTHON
+      shell: bash
       run: |
         if [ "${{ runner.os }}" != "Windows" ]; then
           echo "LOCAL_PYTHON=/usr/local/python-${{ inputs.python-version }}/bin/python3" >> $GITHUB_ENV
