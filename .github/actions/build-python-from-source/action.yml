@@ -62,23 +62,24 @@ runs:
         if [ "${{ inputs.nogil }}" = "true" ]; then
           configure_options="--disable-gil"  # Add the --disable-gil option if nogil is true.
         fi
-        if [ "${{ runner.os }}" = "Linux" ] || [ "${{ inputs.os }}" = "macOS" ]; then
+        if [ "${{ runner.os }}" = "Linux" ] || [ "${{ runner.os }}" = "macos" ]; then
           prefix="/usr/local/python-${{ inputs.python-version }}"
         elif [ "${{ runner.os }}" = "Windows" ]; then
           prefix="C:/Python/${{ inputs.python-version }}"
         fi
-        # Work around the sys.prefix issue in macOS builds.
-        if [ "${{ runner.os }}" = "macOS" ]; then
-          configure_options+=" --enable-shared"
-        fi
+        #if [ "${{ runner.os }}" = "macOS" ]; then
+        #  configure_options+=" --enable-shared"
+        #fi
         # Build it!
         if [ "${{ runner.os }}" != "Windows" ]; then
+          echo CONFIGURE: --prefix=$prefix CFLAGS="-O3" CXXFLAGS="-O3" $configure_options
           ./configure --prefix=$prefix CFLAGS="-O3" CXXFLAGS="-O3" $configure_options
           make -j $(nproc)  # Use all available processors to speed up the build.
         else
           # Use the build script provided for Windows in the Python source.
           set CFLAGS=/Ox
           set CXXFLAGS=/Ox
+          echo BUILD: $configure_options
           ./PCbuild/build.bat -e -d $configure_options
         fi
         # Make sure we use our version of python.
