@@ -103,8 +103,10 @@ runs:
         if [ "${{ runner.os }}" != "Windows" ]; then
           echo "LOCAL_PYTHON=/usr/local/python-${{ inputs.python-version }}/bin/python3" >> $GITHUB_ENV
         else
+          # Find the Python executable and set LOCAL_PYTHON
           cwd=$(pwd)
-          echo "LOCAL_PYTHON=${cwd}/Python/${{ inputs.python-version }}/python3*_d.exe" >> $GITHUB_ENV
+          LOCAL_PYTHON=$(find "${cwd}/Python/${{ inputs.python-version }}" -name "python3*_d.exe")
+          echo "LOCAL_PYTHON=${LOCAL_PYTHON}" >> $GITHUB_ENV
         fi
 
     # Ensure python is in the path and log out the version to help with debug.
