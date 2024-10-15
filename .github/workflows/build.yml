@@ -102,7 +102,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          $LOCAL_PYTHON  -P-m pip install --upgrade setuptools wheel
+          $LOCAL_PYTHON  -P -m pip install --upgrade setuptools wheel
 
       # Build the wheel package with or without nogil suffix.
       - name: Build
