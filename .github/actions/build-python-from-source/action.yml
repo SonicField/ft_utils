@@ -65,7 +65,8 @@ runs:
         if [ "${{ runner.os }}" = "Linux" ] || [ "${{ runner.os }}" = "macOS" ]; then
           prefix="/usr/local/python-${{ inputs.python-version }}"
         elif [ "${{ runner.os }}" = "Windows" ]; then
-          prefix="C:/Python/${{ inputs.python-version }}"
+          cwd=$(pwd)
+          prefix=$(cygpath -w "${cwd}/Python/${{ inputs.python-version }}")
         fi
         # Build it!
         if [ "${{ runner.os }}" != "Windows" ]; then
@@ -76,17 +77,6 @@ runs:
           set CFLAGS=/Ox
           set CXXFLAGS=/Ox
           ./PCbuild/build.bat -e -d $configure_options
-        fi
-
-      # Make sure we use our version of python.
-    - name: Set LOCAL_PYTHON
-      shell: bash
-      run: |
-        if [ "${{ runner.os }}" != "Windows" ]; then
-          echo "LOCAL_PYTHON=/usr/local/python-${{ inputs.python-version }}/bin/python3" >> $GITHUB_ENV
-        else
-          cwd=$(pwd)
-          echo "LOCAL_PYTHON=${cwd}/Python/${{ inputs.python-version }}/python.exe" >> $GITHUB_ENV
         fi
 
     # Install the built Python version.
@@ -102,10 +92,20 @@ runs:
           # Create the installation directory
           mkdir -p "${cwd}/Python/${{ inputs.python-version }}"
           # Copy the Python executable and necessary DLLs to the installation directory
-          cp PCbuild/amd64/python.exe "${cwd}/Python/${{ inputs.python-version }}"
+          cp PCbuild/amd64/*.exe "${cwd}/Python/${{ inputs.python-version }}"
           cp PCbuild/amd64/*.dll "${cwd}/Python/${{ inputs.python-version }}"
         fi
 
+    # Make sure we use our version of python.
+    - name: Set LOCAL_PYTHON
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" != "Windows" ]; then
+          echo "LOCAL_PYTHON=/usr/local/python-${{ inputs.python-version }}/bin/python3" >> $GITHUB_ENV
+        else
+          cwd=$(pwd)
+          echo "LOCAL_PYTHON=${cwd}/Python/${{ inputs.python-version }}/python3*_d.exe" >> $GITHUB_ENV
+        fi
 
     # Ensure python is in the path and log out the version to help with debug.
     - name: Verify Python Installation
