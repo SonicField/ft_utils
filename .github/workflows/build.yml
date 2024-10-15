@@ -54,7 +54,7 @@ jobs:
             build-from-source: true
             nogil: true
           - os: ubuntu-latest
-            python-version: ''
+            python-version: '3.14.0-alpha.0'
             build-from-source: true
             nogil: true
 
