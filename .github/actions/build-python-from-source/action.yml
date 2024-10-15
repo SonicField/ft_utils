@@ -36,9 +36,11 @@ runs:
           choco install --quiet  --no-progress openssl
         fi
 
+    # We do not need to keep building python from source if it is against a tag which is therefore
+    # unchanging.
     - name: Cache the entire checkout and build.
       if: "!contains(inputs.python-version, 'alpha')"
-      uses: actions/cache@v3
+      uses: actions/cache/restore@v3
       id: cpython-cache
       with:
         path: ${github.workspace}/cpython
@@ -90,14 +92,14 @@ runs:
           ./PCbuild/build.bat -e $configure_options
         fi
 
-    # Update/create the cache.
+    # Update/create the cache. We force this so even if later parts of the workflow fail
+    # we do not need to keep rebuilding a headlthy vesion of the python system.
     - name: Cache Python build
       if: "!contains(inputs.python-version, 'alpha')"
-      uses: actions/cache@v3
+      uses: actions/cache/save@v3
       with:
         path: ${github.workspace}/cpython
         key: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
-        restore-keys: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
 
     # Install the built Python version.
     - name: Install Python

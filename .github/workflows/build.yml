@@ -87,9 +87,10 @@ jobs:
         run: echo "LOCAL_PYTHON=python" >> $GITHUB_ENV
 
       # Upgrade pip to the latest version.
-      - name: Upgrade pip
+      - name: Install/Upgrade pip
         shell: bash
         run: |
+          $LOCAL_PYTHON -m ensurepip
           $LOCAL_PYTHON -m pip install --upgrade pip
 
       # Make sure Visual Studio build is all in place on Windows.
