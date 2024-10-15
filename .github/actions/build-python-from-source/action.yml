@@ -48,8 +48,19 @@ runs:
           git checkout ${{ inputs.python-version }}
         fi
 
+    - name: Cache Python built artifacts
+      uses: actions/cache@v3
+      id: python-cache
+      with:
+        path: |
+          /usr/local/python-${{ inputs.python-version }} (Linux)
+          ${github.workspace}/Python/${{ inputs.python-version }} (Windows)
+          /usr/local/python-${{ inputs.python-version }} (macOS)
+        key: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
+
     # Configure and build Python based on the OS and the 'nogil' input.
     - name: Configure and build Python
+      if: steps.python-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         # Do some output to help debugging if things go wrong/
@@ -81,6 +92,7 @@ runs:
 
     # Install the built Python version.
     - name: Install Python
+      if: steps.python-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         cd cpython
@@ -104,6 +116,7 @@ runs:
           echo "LOCAL_PYTHON=/usr/local/python-${{ inputs.python-version }}/bin/python3" >> $GITHUB_ENV
         else
           # Find the Python executable and set LOCAL_PYTHON
+          cd cpython
           cwd=$(pwd)
           LOCAL_PYTHON=$(find "${cwd}/Python/${{ inputs.python-version }}" -name "python3*_d.exe")
           echo "LOCAL_PYTHON=${LOCAL_PYTHON}" >> $GITHUB_ENV
