@@ -103,7 +103,6 @@ runs:
 
     # Install the built Python version.
     - name: Install Python
-      if: steps.cpython-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         cd cpython

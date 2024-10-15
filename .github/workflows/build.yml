@@ -90,8 +90,9 @@ jobs:
       - name: Install/Upgrade pip
         shell: bash
         run: |
-          $LOCAL_PYTHON -P -m ensurepip
-          $LOCAL_PYTHON -P -m pip install --upgrade pip
+          cd ..
+          $LOCAL_PYTHON -m ensurepip
+          $LOCAL_PYTHON -m pip install --upgrade pip
 
       # Make sure Visual Studio build is all in place on Windows.
       - name: Setup MSVC
@@ -102,7 +103,8 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          $LOCAL_PYTHON  -P -m pip install --upgrade setuptools wheel
+          cd ..
+          $LOCAL_PYTHON -m pip install --upgrade setuptools wheel
 
       # Build the wheel package with or without nogil suffix.
       - name: Build
