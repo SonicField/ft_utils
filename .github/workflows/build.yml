@@ -24,39 +24,39 @@ jobs:
         include:
           # Add below those versions we want as Gil Based releases.
           # Note that 3.12.7 is only availible with the Gil enabled.
-          #- os: ubuntu-latest
-          #  python-version: '3.12.7'
-          #  build-from-source: false
-          #- os: ubuntu-latest
-          #  python-version: '3.13.0'
-          #  build-from-source: false
-          #- os: windows-latest
-          #  python-version: '3.13.0'
-          #  build-from-source: false
-          #- os: macos-latest
-          #  python-version: '3.13.0'
-          #  build-from-source: false
-          #- os: ubuntu-latest
-          #  python-version: '3.14.0-alpha.0'
-          #  build-from-source: false
+          - os: ubuntu-latest
+            python-version: '3.12.7'
+            build-from-source: false
+          - os: ubuntu-latest
+            python-version: '3.13.0'
+            build-from-source: false
+          - os: windows-latest
+            python-version: '3.13.0'
+            build-from-source: false
+          - os: macos-latest
+            python-version: '3.13.0'
+            build-from-source: false
+          - os: ubuntu-latest
+            python-version: '3.14.0-alpha.0'
+            build-from-source: false
           # Add below those versions we want as Free Threaded releases.
           # For these you will need the tag name see: https://github.com/python/cpython/tags
-          #- os: ubuntu-latest
-          #  python-version: 'v3.13.0'
-          #  build-from-source: true
-          #  nogil: true
+          - os: ubuntu-latest
+            python-version: 'v3.13.0'
+            build-from-source: true
+            nogil: true
           - os: windows-latest
             python-version: 'v3.13.0'
             build-from-source: true
             nogil: true
-          #- os: macos-latest
-          #  python-version: 'v3.13.0'
-          #  build-from-source: true
-          #  nogil: true
-          #- os: ubuntu-latest
-          #  python-version: '3.14.0-alpha.0'
-          #  build-from-source: true
-          #  nogil: true
+          - os: macos-latest
+            python-version: 'v3.13.0'
+            build-from-source: true
+            nogil: true
+          - os: ubuntu-latest
+            python-version: '3.14.0-alpha.0'
+            build-from-source: true
+            nogil: true
 
     runs-on: ${{ matrix.os }}
 

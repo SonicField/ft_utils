@@ -43,7 +43,7 @@ runs:
       uses: actions/cache/restore@v3
       id: cpython-cache
       with:
-        path: ${github.workspace}/cpython
+        path: cpython
         key: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
         restore-keys: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
 
@@ -98,7 +98,7 @@ runs:
       if: "!contains(inputs.python-version, 'alpha')"
       uses: actions/cache/save@v3
       with:
-        path: ${github.workspace}/cpython
+        path: cpython
         key: ${{ runner.os }}-python-${{ inputs.python-version }}-${{ inputs.nogil }}
 
     # Install the built Python version.
