@@ -42,7 +42,11 @@ runs:
       run: |
         git clone https://github.com/python/cpython.git
         cd cpython
-        git checkout ${{ inputs.python-version }}
+        if [[ ${{ inputs.python-version }} == *"alpha"* ]]; then
+          git checkout main
+        else
+          git checkout ${{ inputs.python-version }}
+        fi
 
     # Configure and build Python based on the OS and the 'nogil' input.
     - name: Configure and build Python
